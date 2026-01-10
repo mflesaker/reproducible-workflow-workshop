@@ -1,7 +1,6 @@
 # Quarto
 /.quarto/
 /_freeze/
-/_manuscript/
 *_cache/
 
 # R
