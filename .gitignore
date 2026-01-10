@@ -16,3 +16,6 @@ Thumbs.db
 
 # Note: Generated output (_manuscript/) is ignored
 # Students should run 'quarto render' to generate output locally
+.Rproj.user
+
+**/*.quarto_ipynb
