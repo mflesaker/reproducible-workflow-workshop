@@ -42,10 +42,7 @@ Hypertension affects millions of Americans [@whelton2018hypertension].
 
 ## Methods
 
-We included `r nrow(data_clean)` participants from NHANES 2009-2012.
-The sample included `r sum(data_clean$Gender == "female")` females
-and `r sum(data_clean$Gender == "male")` males.
-The mean age was `r round(mean(data_clean$Age), 1)` years.
+We included `r nrow(data_clean)` participants from NHANES 2009-2012. The sample included `r sum(data_clean$Gender == "female")` females and `r sum(data_clean$Gender == "male")` males. The mean age was `r round(mean(data_clean$Age), 1)` years.
 
 ### Study Population
 
@@ -75,10 +72,9 @@ The relationship is visualized in @fig-bp-education.
 
 {{< embed notebooks/analysis.qmd#fig-bp-education >}}
 
-<!-- TODO: Uncomment the embed below after creating Table 2 in analysis.qmd -->
-<!-- The results of our analysis are presented in @tbl-main. -->
+The results of our analysis are presented in @tbl-main.
 
-<!-- {{< embed analysis.qmd#tbl-main >}} -->
+{{< embed notebooks/analysis.qmd#tbl-main >}}
 
 ## Discussion
 
