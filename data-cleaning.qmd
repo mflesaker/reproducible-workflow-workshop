@@ -14,6 +14,7 @@ This document loads and cleans the NHANES data for analysis.
 ```{r}
 #| label: setup
 #| message: false
+#| echo: false
 
 library(tidyverse)
 library(here)
