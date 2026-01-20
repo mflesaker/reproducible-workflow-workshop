@@ -74,6 +74,6 @@ saveRDS(data_clean, here("results", "data_clean.rds"))
 
 ```{r}
 #| label: data-summary
-
-# TODO: Add summary of cleaned data
 ```
+
+Cleaned data saved to `redults/data_clean.rds` with `r nrow(data_clean)` participants
