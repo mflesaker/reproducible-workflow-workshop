@@ -1,6 +1,6 @@
 ---
 title: "Analysis"
-author: "YOUR NAME"
+author: "Michelle Flesaker"
 date: today
 format: html
 ---
@@ -128,7 +128,7 @@ fit_model_by_group <- function(data, group_var) {
 }
 ```
 
-### Use with different grouping variables
+## Use with different grouping variables
 
 ```{r}
 #| label: use-subgroup-function
@@ -140,13 +140,11 @@ data_clean |> fit_model_by_group(Gender)
 data_clean |> fit_model_by_group(Race1)
 ```
 
-
-
 ## Table 1: Participant Characteristics
 
 ```{r}
 #| label: tbl-demographics
-#| tbl-cap: "Participant characteristics"
+#| tbl-cap: "Participant characteristics by education level"
 
 data_clean |>
   mutate(Gender = str_to_title(Gender)) |>
@@ -169,33 +167,146 @@ data_clean |>
   bold_labels()
 ```
 
-## Figure 1: Main Result
+## Fit the linear regression model
 
 ```{r}
-#| label: fig-main
-#| fig-cap: "Main result figure"
+# Model: Blood pressure ~ Education + covariates
+model_fit <- lm(BPSysAve ~ Education + Gender + Race1, data = data_clean)
 
-# TODO: Create main figure using ggplot2
-# ggplot(data_clean, aes(x = ..., y = ...)) +
-#   geom_point() +
-#   theme_minimal()
+# View the results
+summary(model_fit)
 ```
+
+## Figure 1: Main Result (Box Plot)
+
+```{r}
+#| label: fig-bp-education
+#| fig-cap: "Distribution of systolic BP by education level"
+#| fig-width: 7
+#| fig-height: 5
+
+data_clean |>
+  ggplot(aes(x = Education, y = BPSysAve, fill = Education)) +
+  geom_boxplot(alpha = 0.7) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18,
+    size = 3,
+    color = "darkred"
+  ) +
+  labs(
+    x = "Education Level",
+    y = "Systolic Blood Pressure (mmHg)",
+    title = "Blood Pressure Distribution by Education Level"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+As shown in `@tbl-demographics`, participants varied by education level.
+
+Blood pressure distribution is visualized in `@fig-bp-education`.
 
 ## Table 2: Main Analysis
 
 ```{r}
 #| label: tbl-main
-#| tbl-cap: "Main analysis results"
+#| tbl-cap: "Association between education level and systolic blood pressure"
 
-# TODO: Create analysis table
-# Example: regression results with tbl_regression()
+model_fit |>
+  tbl_regression(
+    label = list(
+      Education ~ "Education level",
+      Gender ~ "Sex",
+      Race1 ~ "Race/ethnicity"
+    )
+  ) |>
+  bold_labels()
 ```
 
-## Additional Figures
+Results of the linear regression are shown in `@tbl-main`.
+
+## Comparisons - Fit two models 
 
 ```{r}
-#| label: fig-additional
-#| fig-cap: "Additional figure"
+#| label: fit-two-models
 
-# TODO: Add additional figures as needed
+# Model 1: Without age adjustment
+model_crude <- lm(BPSysAve ~ Education + Gender + Race1, data = data_clean)
+
+# Model 2: With age adjustment
+model_adjusted <- lm(BPSysAve ~ Education + Gender + Race1 + Age, data = data_clean)
 ```
+
+## Extract and compare coefficients
+
+```{r}
+#| label: compare-models
+
+# Extract College Grad coefficient from both models
+crude_result <- model_crude |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "EducationCollege Grad") |>
+  mutate(model = "Crude (no age)")
+
+adjusted_result <- model_adjusted |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "EducationCollege Grad") |>
+  mutate(model = "Age-adjusted")
+
+# Combine into comparison table
+comparison <- bind_rows(crude_result, adjusted_result) |>
+  select(model, estimate, conf.low, conf.high, p.value)
+
+comparison
+```
+
+## Visualize the comparison
+
+```{r}
+#| label: fig-comparison
+#| fig-cap: "Comparison of crude and age-adjusted estimates for College Grad vs 8th Grade"
+#| fig-width: 6
+#| fig-height: 3
+
+comparison |>
+  ggplot(aes(x = estimate, y = model)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+  geom_point(size = 3, color = "steelblue") +
+  labs(
+    x = "Difference in systolic BP (mmHg)\nCollege Grad vs. 8th Grade",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Create a publication-ready table
+
+```{r}
+#| label: tbl-comparison
+#| tbl-cap: "Comparison of crude and age-adjusted estimates for education-BP association"
+
+comparison |>
+  gt() |>
+  fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 1) |>
+  fmt_number(columns = p.value, decimals = 3) |>
+  cols_merge(
+    columns = c(conf.low, conf.high),
+    pattern = "({1}, {2})"
+  ) |>
+  cols_label(
+    model = "Model",
+    estimate = "β",
+    conf.low = "95% CI",
+    p.value = "P-value"
+  )
+```
+
+
+
+
