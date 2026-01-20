@@ -1,14 +1,31 @@
 ---
-title: "Your Manuscript Title"
+title: "Education Level and Blood Pressure"
 author:
-  - name: "YOUR NAME"
+  - name: "Michelle Flesaker"
     affiliations:
       - name: Boston University School of Public Health
+format:
+  html: default
+  docx: default
+bibliography: references.bib
 ---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(here)
+
+# Load data for inline code
+data_clean <- readRDS(here("results", "data_clean.rds"))
+model_fit <- readRDS(here("results", "model_fit.rds"))
+```
+
 
 ## Abstract
 
-<!-- Write a brief summary of your research -->
+This study examines the association between education level and systolic blood pressure using NHANES data.
 
 **Background:**
 
@@ -20,9 +37,15 @@ author:
 
 ## Introduction
 
-<!-- Introduce the research problem and objectives -->
+Hypertension affects millions of Americans [@whelton2018hypertension].
+
 
 ## Methods
+
+We included `r nrow(data_clean)` participants from NHANES 2009-2012.
+The sample included `r sum(data_clean$Gender == "female")` females
+and `r sum(data_clean$Gender == "male")` males.
+The mean age was `r round(mean(data_clean$Age), 1)` years.
 
 ### Study Population
 
@@ -38,21 +61,19 @@ author:
 
 <!-- Reference Table 1 from analysis.qmd -->
 
-<!-- TODO: Uncomment the embed below after creating Table 1 in analysis.qmd -->
-<!-- As shown in @tbl-demographics, ... -->
 
-<!-- {{< embed analysis.qmd#tbl-demographics >}} -->
 
 ### Main Findings
 
 <!-- Reference your main figure -->
 
-<!-- TODO: Uncomment the embed below after creating Figure 1 in analysis.qmd -->
-<!-- @fig-main shows ... -->
+As shown in @tbl-demographics, participants had...
 
-<!-- {{< embed analysis.qmd#fig-main >}} -->
+{{< embed notebooks/analysis.qmd#tbl-demographics >}}
 
-<!-- Reference your main analysis table -->
+The relationship is visualized in @fig-bp-education.
+
+{{< embed notebooks/analysis.qmd#fig-bp-education >}}
 
 <!-- TODO: Uncomment the embed below after creating Table 2 in analysis.qmd -->
 <!-- The results of our analysis are presented in @tbl-main. -->

@@ -3,6 +3,7 @@ title: "Analysis"
 author: "Michelle Flesaker"
 date: today
 format: html
+html-table-processing: none
 ---
 
 ## Overview
@@ -307,6 +308,12 @@ comparison |>
   )
 ```
 
+```{r}
+#| label: save-results
+
+saveRDS(model_fit, here("results", "model_fit.rds"))
+saveRDS(data_clean, here("results", "data_clean.rds"))
+```
 
 
 
