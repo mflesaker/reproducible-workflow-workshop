@@ -19,6 +19,7 @@ library(tidyverse)
 library(gtsummary)
 library(gt)
 library(here)
+library(broom)
 ```
 
 ## Load Cleaned Data
@@ -63,6 +64,7 @@ tidy(model_bmi, conf.int = TRUE) |>
 
 # Function to run education model for any outcome
 fit_education_model <- function(data, outcome_var) {
+  
   # as.formula() + paste() creates formula from string
   # e.g., "BPSysAve" becomes: BPSysAve ~ Education + Age + Gender
   formula <- as.formula(paste(outcome_var, "~ Education + Age + Gender"))
